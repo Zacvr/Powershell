@@ -1,0 +1,36 @@
+cls
+@echo Beginning Script
+@echo off
+@echo off REG QUERY "HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Feeds" /v EnableFeeds | find "0x0"
+If %ERRORLEVEL% == 1 goto turnon
+
+goto end
+:turnon
+@echo Adding HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Feeds
+REG ADD "HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Feeds" /f
+@echo Adding EnableFeeds Within Windows Feeds
+REG ADD "HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Feeds" /v EnableFeeds /t REG_DWORD /d 00000000 /f
+
+@echo off
+goto end
+:end
+REG QUERY "HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Feeds" /v EnableFeeds | find "0x0"
+If %ERRORLEVEL% == 1 goto broken
+If %ERRORLEVEL% == 0 goto working
+@exit
+
+:working
+@echo -------------------------------------------------------------====
+@echo ^[92mRegistry Edit Worked Please Verify By Logging Out And Back In[0m
+pause
+@exit
+
+:broken
+@echo ----------------------------------
+echo ^[91mWARNING ERROR DETECTED[0m
+@echo ----------------------------------
+@echo ^[91mRegistry Edit Did Not Work[0m
+@echo ----------------------------------
+@echo ^[91mPlease Try Running Again As Admin[0m
+pause
+@exit
