@@ -19,15 +19,19 @@ If (Test-Connection -BufferSize 32 -Count 1 -ComputerName $RemoteComputer -Quiet
                     Write-Host -ForegroundColor RED "WARNING: A User may be actively using this machine verify before restarting!"
                     Write-Host -ForegroundColor DarkRed "Current or Last Logged in user is: $RemoteUser3"
                     $User = "Yes"
+       
                     }
 
+$Header = tasklist /s mj-tc-001 /FI "Username eq zvanroekel" /FI "Session ne 0" |Select -First 3
+   
                 
 Do {$CheckProcesses = Read-Host "Would you like to see their open processes? (Y/N)" } While ($CheckProcesses -notmatch "Y|N")
 $CheckProcesses = $CheckProcesses.substring(0,1)
 If ($CheckProcesses -eq "N"){}
 ElseIf ($User -eq "Yes"){
     If ($CheckProcesses -eq "Y") {
-        tasklist /s $RemoteComputer /FI "Username eq $RemoteUser3"
+        $Header
+        tasklist /s $RemoteComputer /FI "Username eq $RemoteUser3" /FI "Session ne 0" | Select -Skip 3 |sort
         Write-Host "Showing $RemoteUser3's Proccesses"}
         }
      Elseif ($User -eq "No"){
@@ -54,14 +58,14 @@ $NewComputerName = "$NewComputerName".ToUpper()
 Do { $Restart = Read-Host "Would you like to Restart?(Y/N)" } While ($Restart -notmatch "Y|N")
 $Restart = $Restart.substring(0,1)
 $Username = Read-Host "Your Username"
-Write-Host "$ComputerName will be renamed $NewComputerName"
+Write-Host "$RemoteComputer will be renamed $NewComputerName"
 If ($Restart -eq "Y") {
-    Rename-Computer -ComputerName "$ComputerName" -NewName "$NewComputerName" -DomainCredential Chico\$Username -Force -Restart
+    Rename-Computer -ComputerName "$RemoteComputer" -NewName "$NewComputerName" -DomainCredential Chico\$Username -Force -Restart
     Write-Host "The Device Will Now Restart; Run again to see if the new machine is online!"
     Set-ExecutionPolicy Restricted
 
 }Elseif ($Restart -eq "N"){
-    Rename-Computer -ComputerName "$ComputerName" -NewName "$NewComputerName" -DomainCredential Chico\$Username -Force
+    Rename-Computer -ComputerName "$RemoteComputer" -NewName "$NewComputerName" -DomainCredential Chico\$Username -Force
     Write-Host "$NewComputerName will need to be restarted if the user logs out" 
     Set-ExecutionPolicy Restricted
     }
