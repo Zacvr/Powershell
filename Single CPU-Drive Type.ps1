@@ -1,0 +1,5 @@
+﻿#$RemoteComputers = Get-Content -Path "\\mirage\Drivers\TechTools\ZVanRoekel\Fixes\Scripts\CPU & Ram Check\Computers.txt"
+$RemoteComputers = Read-Host "Computer Name?"
+    Get-WmiObject -Class Win32_Processor -ComputerName $RemoteComputer | Select PSComputerName, Name | Out-File -append -FilePath "\\mirage\Drivers\TechTools\ZVanRoekel\Fixes\Scripts\CPU & Drive Type Check\Results.txt"
+    Get-WmiObject -Class MSFT_PhysicalDisk -ComputerName $RemoteComputer -Namespace root\Microsoft\Windows\Storage | Select Friendlyname | Out-File -append -FilePath "\\mirage\Drivers\TechTools\ZVanRoekel\Fixes\Scripts\CPU & Drive Type Check\Results.txt"
+Write-Host "Done"
