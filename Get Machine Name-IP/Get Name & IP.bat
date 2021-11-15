@@ -1,0 +1,1 @@
+Powershell.exe -executionpolicy remotesigned -File  "\\mirage\Drivers\TechTools\ZVanRoekel\Fixes\Scripts\Get Machine Name, IP\Get Name & IP.ps1"

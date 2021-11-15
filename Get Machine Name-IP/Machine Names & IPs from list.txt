@@ -1,0 +1,1 @@
+Get-ADComputer -Filter 'Name -like "MJ-L967" + "*"' -Properties IPv4Address | Sort-Object Name | FT Name,IPv4Address -A
