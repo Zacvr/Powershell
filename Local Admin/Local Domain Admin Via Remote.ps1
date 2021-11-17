@@ -1,7 +1,7 @@
 $DomainName = "chico.usd"
 Do { $Choice = Read-Host "Would you like to 'Add' or 'Remove' a Local Domain Admin?" } While ($Choice -notmatch "Add|Remove")
-$ComputerName = Read-Host "Computer name:"
-$UserName = Read-Host "User name:"
+$ComputerName = Read-Host "Computer name"
+$UserName = Read-Host "User name"
 $AdminGroup = [ADSI]"WinNT://$ComputerName/Administrators,group"
 $User = [ADSI]"WinNT://$DomainName/$UserName,user"
 $AdminGroup.$Choice($User.Path) 

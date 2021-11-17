@@ -1,10 +1,10 @@
-Do { $Choice = Read-Host "Would you like to 'Add' or 'Remove' a Local Domain Admin?" } While ($Choice -notmatch "Add|Remove")
+Do { $Choice = Read-Host "Would you like to 'Add' or 'Remove' a Local Admin?" } While ($Choice -notmatch "Add|Remove")
 
 if ($Choice -eq "Add")
 {
 #Define variables
 $DomainName = "chico.usd"
-$computers = Read-Host "Computer name:"
+$computers = Read-Host "Computer name"
 $username = Read-Host “Admin Login Name”
 $password = Read-Host “Password To Be Used”
 $fullname = Read-Host “Full Account Name”
@@ -57,7 +57,7 @@ Write-Host “Error creating $username on $($computer.path): $($Error[0].Exception
 }}else 
 {
 $DomainName = "chico.usd"
-$computers = Read-Host "Computer name:"
+$computers = Read-Host "Computer name"
 $username = Read-Host “Admin Login Name”
 $computer = [ADSI]("WinNT://$computers,computer")
 $Group = $computer.PSBase.Children.Find("Administrators")
