@@ -8,23 +8,24 @@ Import-Module activedirectory
 $report = @()
 foreach ($Computer in $Computers){
 $Computer = $Computer.ToUpper()
+Try{
 if (Test-Connection $Computer -count 1 -quiet){ 
-    $Name = Get-WmiObject -Class Win32_Processor -ComputerName $Computer -erroraction SilentlyContinue | Select PSComputerName 
-    $Name1 = $Name -replace ".$"
-    $Name2 = $Name1.substring(15)
-    $Name = $Name2.substring(2)
     $CPU = Get-WmiObject -Class Win32_Processor -ComputerName $Computer -erroraction SilentlyContinue | Select Name 
     $CPU1 = $CPU -replace ".$" 
     $CPU = $CPU1.substring(7) 
     $IP = Test-Connection $Computer -count 1 -erroraction SilentlyContinue | Select IPV4Address
     $IP1 = $IP -replace ".$"
     $IP = $IP1.substring(14)
-    $report += New-Object psobject -Property @{Name=$Name;CPU=$CPU;IP=$IP}
+    $report += New-Object psobject -Property @{Name=$Computer;CPU=$CPU;IP=$IP}
     $report | export-csv -append "$PSScriptRoot\$RemoteComputer.csv"
 
-    Write-Host $Computer
+    $Computer
     }
+        else{
+    Write-Host "$Computer is offline" -Fore Magenta
+    }}
+    catch{Write-Host "Unable to check $Computer likely RPC server unavailable" -Fore Red
+    $report += New-Object psobject -Property @{Name=$Computer;CPU="";IP=$IP}
+    $report | export-csv -append "$PSScriptRoot\$RemoteComputer.csv"}
 
-else{
-    Write-Host "$Computer Not found" -Fore Red
-}}
+}
