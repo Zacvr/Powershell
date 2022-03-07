@@ -126,8 +126,28 @@ Function zOpenPrograms {
 Else {Write-Host -ForegroundColor Red "PC seems to be offline"}
 }
 
-Function zOUCounter {
+Function zOUPCCounter {
 Write-Host "(Right click OU > Properties > Attribute Editor > DoubleClick DistinguishedName > Copy)"
 $OU = Read-Host "What is the DistinguishedName?"
-Get-ADComputer -SearchBase "$OU" -Filter * | Measure-Object
+Write-Host -F Green "Enabled Machines"
+$OUEnabled = Get-ADComputer -SearchBase "$OU" -Filter * | where -Property Enabled -eq $true | Measure-Object | Select Count
+$OUEnabled = $OUEnabled -replace "[^0-9]"
+$OUEnabled = [int]$OUEnabled
+$OUEnabled
+
+Write-Host -F Red "Disabled Machines"
+$OUDisabled= Get-ADComputer -SearchBase "$OU" -Filter * | where -Property Enabled -eq $false | Measure-Object | Select Count
+$OUDisabled = $OUDisabled -replace "[^0-9]"
+$OUDisabled = [int]$OUDisabled
+$OUEnabled
+
+Write-Host -F Y "Total Machines"
+$OUTotalMahcines = $OUEnabled + $OUDisabled
+$OUTotalMahcines
+}
+
+Function zOUPCEnabledNames {
+Write-Host "(Right click OU > Properties > Attribute Editor > DoubleClick DistinguishedName > Copy)"
+$OU = Read-Host "What is the DistinguishedName?";
+Get-ADComputer -Filter * -SearchBase "$OU"-Properties lastLogonTimestamp| where -Property Enabled -eq $true | Sort | select Name ,@{n='Last Logon';e={[datetime]::FromFileTime($_.lastLogonTimestamp)}} | out-host
 }
