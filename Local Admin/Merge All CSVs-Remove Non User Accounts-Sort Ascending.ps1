@@ -1,0 +1,4 @@
+﻿Get-ChildItem '\\mirage\Drivers\TechTools\ZVanRoekel\Fixes\Scripts\Local Admin\Per Site\Results\*.CSV' |
+  ForEach-Object { Import-Csv $_ } |
+  where {$_.GroupMember -ne 'CHICO\InfoServ' -and $_.GroupMember -ne 'CHICO\IS-Techs'  -and $_.GroupMember -ne 'CHICO\do-temp-techs' -and $_.GroupMember -ne 'CHICO\IT-Site-Support' -and $_.GroupMember -ne 'CHICO\Domain Admins' -and $_.GroupMember -ne 'CHICO\IS-All' -and $_.GroupMember -ne 'Server could not be contacted' -and $_.GroupMember -ne 'CHICO\CUSD_High_School_Techs' -and $_.GroupMember -ne 'CHICO\alt-ed-teachers' -and $_.GroupMember -ne 'CHICO\alt-ed-office-staff' -and $_.GroupMember -notlike '*\Admin' -and $_.GroupMember -notlike '*\Administrator'} |
+  Export-Csv '\\mirage\Drivers\TechTools\ZVanRoekel\Fixes\Scripts\Local Admin\AllSitesRevised-Sorted.csv' -NoTypeInformation -Force
