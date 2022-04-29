@@ -36,10 +36,13 @@ $TotalMachines = $TotalMachines -replace "[^0-9]"
 $TotalMachines = [int]$TotalMachines
 Write-Host -F Green "There is a total of $TotalMachines in this list $TotalIgnoredMachines of those will be ignored"
 $Number = $TotalIgnoredMachines
+$SkippedMachines = [int]"0"
+
+
 
 foreach ($Computer in $Computers){
 $Computer = $Computer.ToUpper()
-Write-Progress -Activity "Processing $Computer number $Number"
+Write-Progress -Activity "Processing $Computer Number $Number; Total Skipped Machines $SkippedMachines"
 Try{
 $Number = $Number+1
 if (Test-Connection $Computer -count 1 -quiet){
@@ -56,11 +59,10 @@ $Drive = ""
         New-Object psobject -Property @{Name=$Computer;Drive=$Drive} | export-csv -NoTypeInformation -append "$PSScriptRoot\DrivesOfMachines.CSV"
         }
 }
-    Else {
+    Else { $SkippedMachines = $SkippedMachines+1}
 #$Number = $Number+1
 #Write-host -F Magenta "$Computer is $Number out of $TotalMachines; failed to get Drive Type." # Collecting Last Logon Date"
-   }
-    }
+       }
 
 catch {
 #$Number = $Number+1
