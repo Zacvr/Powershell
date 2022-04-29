@@ -37,12 +37,12 @@ $TotalMachines = [int]$TotalMachines
 Write-Host -F Green "There is a total of $TotalMachines in this list $TotalIgnoredMachines of those will be ignored"
 $Number = $TotalIgnoredMachines
 $SkippedMachines = [int]"0"
-
+$RemainingMachines =[int]$TotalMachines-$TotalIgnoredMachines
 
 
 foreach ($Computer in $Computers){
 $Computer = $Computer.ToUpper()
-Write-Progress -Activity "Processing $Computer Number $Number; Total Skipped Machines $SkippedMachines"
+Write-Progress -Activity "Processing $Computer Number $Number; Total Skipped Machines $SkippedMachines; Machines Left $RemainingMachines"
 Try{
 $Number = $Number+1
 if (Test-Connection $Computer -count 1 -quiet){
@@ -53,18 +53,20 @@ $Drive = ""
     $report = @()
 
     $Drive = Get-WmiObject -Class MSFT_PhysicalDisk -ComputerName $Computer -Namespace root\Microsoft\Windows\Storage -erroraction Stop |  select -ExpandProperty friendlyname
+    $RemainingMachines = $RemainingMachines - 1
     if (!$Drive){Write-Host "Drive is Null"} 
     else{
         Write-Host -F Cyan "$Computer" -nonewline; Write-Host " has a " -nonewline; ;Write-Host -F Magenta "$Drive"
         New-Object psobject -Property @{Name=$Computer;Drive=$Drive} | export-csv -NoTypeInformation -append "$PSScriptRoot\DrivesOfMachines.CSV"
+        $RemainingMachines = $RemainingMachines-1
         }
 }
-    Else { $SkippedMachines = $SkippedMachines+1}
+    Else { $SkippedMachines = $SkippedMachines+1; $RemainingMachines = $RemainingMachines-1}
 #$Number = $Number+1
 #Write-host -F Magenta "$Computer is $Number out of $TotalMachines; failed to get Drive Type." # Collecting Last Logon Date"
        }
 
-catch {
+catch {$SkippedMachines = $SkippedMachines+1; $RemainingMachines = $RemainingMachines-1
 #$Number = $Number+1
 #Write-host -F Red "$Computer is $Number out of $TotalMachines RPC Server is Unavailiable"
 }
